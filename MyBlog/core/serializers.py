@@ -10,7 +10,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-
+    author = UserSerializer(read_only=True)
+    
     class Meta:
         model = Post
         fields = ['id', 'title', 'content' , 'date_created' , 'category', 'author']
@@ -23,10 +24,6 @@ class PostSerializer(serializers.ModelSerializer):
             category_instance = Category.objects.get(pk=data['category'])
             category_serializer = CategorySerializer(category_instance)
             data['category'] = category_serializer.data
-
-            author_instance = User.objects.get(pk=data['author'])
-            author_serializer = UserSerializer(author_instance)
-            data['author'] = author_serializer.data
         return data
         
 
