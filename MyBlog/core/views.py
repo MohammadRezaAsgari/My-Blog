@@ -28,7 +28,13 @@ class PostViewSet(viewsets.ModelViewSet):
         if self.request.method in SAFE_METHODS:
             return [AllowAny(), ]
         elif self.request.method in NOT_SAFE_METHODS:
+            if self.request.method in EDIT_METHODS:
+                return [IsOwner(),]
             return [IsAuthenticated(),]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+        return super().perform_create(serializer)
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()

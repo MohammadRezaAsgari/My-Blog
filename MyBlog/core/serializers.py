@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from .models import Category, Post, Comment
 from myauth.serializers import UserSerializer
 
@@ -12,7 +13,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', 'title', 'content' , 'date_created' , 'category']
+        fields = ['id', 'title', 'content' , 'date_created' , 'category', 'author']
         extra_kwargs = {'date_created': {'read_only': True},
                         }
 
@@ -22,6 +23,10 @@ class PostSerializer(serializers.ModelSerializer):
             category_instance = Category.objects.get(pk=data['category'])
             category_serializer = CategorySerializer(category_instance)
             data['category'] = category_serializer.data
+
+            author_instance = User.objects.get(pk=data['author'])
+            author_serializer = UserSerializer(author_instance)
+            data['author'] = author_serializer.data
         return data
         
 
